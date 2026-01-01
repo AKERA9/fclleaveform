@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary-red': '#D40000',
+                        'primary-dark-red': '#A30000',
+                        'success-green': '#10B981',
+                    },
+                    fontFamily: { sans: ['Inter', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+        body { font-family: 'Inter', sans-serif; transition: all 0.3s ease; }
+        .success-message { display: none; }
+        @keyframes tick-pop {
+            0% { transform: scale(0); opacity: 0; }
+            80% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .animate-tick { animation: tick-pop 0.3s ease-out forwards; }
+    </style>
+</head>
+
+<body class="bg-gray-50 min-h-screen flex items-center justify-center p-4">
+
+    <div id="form-container" class="w-full max-w-sm sm:max-w-md bg-white p-6 sm:p-8 rounded-xl shadow-2xl transition-all duration-300 border-t-8 border-primary-red">
+        <h2 class="text-3xl font-extrabold text-gray-800 mb-6 text-center">Leave Request</h2>
+        
+        <form id="myForm" class="space-y-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                <select id="name" name="name" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-primary-red focus:border-primary-red bg-white">
+                    <option value="" disabled selected>-- Select Your Name --</option>
+                    <option value="Aakash">Aakash</option>
+                    <option value="Rajmati">Rajmati</option>
+                    <option value="Ajit">Deepak</option>
+                </select>
+            </div>
+
+            <div class="flex space-x-4">
+                <div class="w-1/2">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Date</label>
+                    <input type="date" id="date" name="date" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-primary-red focus:border-primary-red">
+                </div>
+                <div class="w-1/2">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Day</label>
+                    <select id="day" name="day" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-primary-red focus:border-primary-red bg-white">
+                        <option value="" disabled selected>-- Select --</option>
+                        <option value="Monday">Monday</option>
+                        <option value="Tuesday">Tuesday</option>
+                        <option value="Wednesday">Wednesday</option>
+                        <option value="Thursday">Thursday</option>
+                        <option value="Friday">Friday</option>
+                        <option value="Saturday">Saturday</option>
+                    </select>
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Reason</label>
+                <textarea id="reason" name="reason" rows="3" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-primary-red focus:border-primary-red resize-none" placeholder="Reason for leave..."></textarea>
+            </div>
+
+            <button id="submitBtn" type="submit" class="w-full relative flex items-center justify-center py-3 px-4 border border-transparent rounded-lg shadow-md text-base font-bold text-white bg-primary-red hover:bg-primary-dark-red transition duration-300">
+                <span id="btn-text">Submit & Open WhatsApp</span>
+                <svg id="loading-spinner" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+            </button>
+        </form>
+    </div>
+
+    <div id="success-message" class="success-message fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm z-50 flex items-center justify-center p-4 transition-opacity duration-300 ease-in-out opacity-0 pointer-events-none">
+        <div class="bg-white p-8 rounded-xl shadow-2xl text-center max-w-sm w-full">
+            <div class="flex justify-center mb-4">
+                <div class="h-16 w-16 bg-success-green rounded-full flex items-center justify-center text-white text-3xl font-bold animate-tick">✔</div>
+            </div>
+            <h3 class="text-xl font-bold text-gray-800 mb-2">Saved!</h3>
+            <p class="text-gray-600 mb-4">Data Sheet mein save ho gaya hai. Agar WhatsApp nahi khula, to niche click karein.</p>
+            
+            <a id="whatsapp-link-btn" href="#" target="_blank" class="block w-full py-3 px-4 rounded-lg text-white font-bold bg-[#25D366] hover:bg-[#128C7E] transition duration-150 mb-3 shadow-lg flex items-center justify-center gap-2">
+                 <span>Open WhatsApp Now</span>
+            </a>
+
+            <button id="closeSuccessBtn" class="w-full py-2 px-4 rounded-lg text-gray-600 font-semibold bg-gray-200 hover:bg-gray-300 transition duration-150">
+                Close
+            </button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById("myForm");
+            const submitBtn = document.getElementById("submitBtn");
+            const btnText = document.getElementById("btn-text");
+            const loadingSpinner = document.getElementById("loading-spinner");
+            const successMessage = document.getElementById("success-message");
+            const closeSuccessBtn = document.getElementById("closeSuccessBtn");
+            const whatsappBtn = document.getElementById("whatsapp-link-btn");
+            const dateInput = document.getElementById('date');
+            const daySelect = document.getElementById('day');
+            
+            // --- WhatsApp Number Configuration ---
+            const WA_PHONE = "919711220917"; 
+
+            const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+            function setLoading(isLoading) {
+                submitBtn.disabled = isLoading;
+                if (isLoading) {
+                    btnText.textContent = "Processing...";
+                    loadingSpinner.classList.remove("hidden");
+                } else {
+                    btnText.textContent = "Submit & Open WhatsApp";
+                    loadingSpinner.classList.add("hidden");
+                }
+            }
+
+            function generateWhatsAppLink(data) {
+                // Formatting the message
+                const text = `*Leave Request*%0A` +
+                             `*Name:* ${data.name}%0A` +
+                             `*Date:* ${data.date}%0A` +
+                             `*Day:* ${data.day}%0A` +
+                             `*Reason:* ${data.reason}`;
+                
+                return `https://wa.me/${WA_PHONE}?text=${text}`;
+            }
+
+            function showSuccess(waLink) {
+                // 1. Try to open WhatsApp automatically
+                window.open(waLink, '_blank');
+
+                // 2. Setup the manual button just in case popup blocked
+                whatsappBtn.href = waLink;
+
+                // 3. Show UI Modal
+                successMessage.classList.remove("success-message", "opacity-0", "pointer-events-none");
+                successMessage.classList.add("opacity-100");
+                document.getElementById("form-container").classList.add("opacity-20", "blur-sm");
+                
+                form.reset();
+                setLoading(false);
+                updateDayFromDate(); // Reset date logic
+            }
+
+            function hideSuccess() {
+                successMessage.classList.remove("opacity-100");
+                successMessage.classList.add("opacity-0", "pointer-events-none");
+                document.getElementById("form-container").classList.remove("opacity-20", "blur-sm");
+            }
+
+            function updateDayFromDate() {
+                const selectedDate = dateInput.value;
+                if (selectedDate) {
+                    const dateObj = new Date(selectedDate);
+                    const dayIndex = dateObj.getDay(); 
+                    const dayName = daysOfWeek[dayIndex];
+                    if (dayName !== 'Sunday') {
+                        daySelect.value = dayName;
+                    } else {
+                        daySelect.value = ''; 
+                    }
+                } else {
+                    daySelect.value = '';
+                }
+            }
+
+            dateInput.addEventListener('input', updateDayFromDate);
+            closeSuccessBtn.addEventListener("click", hideSuccess);
+
+            // Set today's date
+            const today = new Date();
+            dateInput.value = today.toISOString().split('T')[0];
+            updateDayFromDate();
+
+            form.addEventListener("submit", function(e) {
+                e.preventDefault();
+                setLoading(true);
+
+                const formData = Object.fromEntries(new FormData(this).entries());
+                
+                // Generate link immediately
+                const waLink = generateWhatsAppLink(formData);
+
+                if (typeof google !== 'undefined' && typeof google.script !== 'undefined') {
+                    google.script.run
+                        .withSuccessHandler(() => showSuccess(waLink))
+                        .withFailureHandler(error => {
+                            alert("Error saving to sheet, but opening WhatsApp...");
+                            setLoading(false);
+                            window.open(waLink, '_blank'); // Still open WA if sheet fails
+                        })
+                        .submitData(formData);
+                } else {
+                    // Testing mode (without Google Sheets)
+                    setTimeout(() => {
+                        console.log("Simulating submission...");
+                        showSuccess(waLink);
+                    }, 1000);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
