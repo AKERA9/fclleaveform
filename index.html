@@ -1,168 +1,134 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'primary-red': '#D40000',
-                        'primary-dark-red': '#A30000',
-                        'success-green': '#10B981',
-                    },
-                    fontFamily: { sans: ['Inter', 'sans-serif'] }
-                }
-            }
-        }
-    </script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
-        body { font-family: 'Inter', sans-serif; transition: all 0.3s ease; }
-        .success-message { display: none; }
-        @keyframes tick-pop {
-            0% { transform: scale(0); opacity: 0; }
-            80% { transform: scale(1.1); opacity: 1; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-        .animate-tick { animation: tick-pop 0.3s ease-out forwards; }
-    </style>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://cdn.tailwindcss.com"></script>
+
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        'primary-red': '#D40000',
+        'primary-dark-red': '#A30000',
+        'success-green': '#10B981',
+      }
+    }
+  }
+}
+</script>
+
+<style>
+.success-message { display:none }
+</style>
 </head>
 
-<body class="bg-gray-50 min-h-screen flex items-center justify-center p-4">
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
 
-    <div id="form-container" class="w-full max-w-sm sm:max-w-md bg-white p-6 sm:p-8 rounded-xl shadow-2xl transition-all duration-300 border-t-8 border-primary-red">
-        <h2 class="text-3xl font-extrabold text-gray-800 mb-6 text-center">Leave Request</h2>
-        
-        <form id="myForm" class="space-y-4">
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Name</label>
-                <select id="name" name="name" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-primary-red focus:border-primary-red bg-white">
-                    <option value="" disabled selected>-- Select Your Name --</option>
-                    <option value="Aakash">Aakash</option>
-                    <option value="Rajmati">Rajmati</option>
-                    <option value="Deepak">Deepak</option>
-                    <option value="Rakesh">Rakesh</option>
-                    <option value="Vedraaj">Vedraaj</option>
-                </select>
-            </div>
+<div id="formBox" class="bg-white w-full max-w-md p-6 rounded-xl shadow-xl border-t-8 border-primary-red">
+  <h2 class="text-2xl font-bold text-center mb-4">Leave Request</h2>
 
-            <div class="flex space-x-4">
-                <div class="w-1/2">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Date</label>
-                    <input type="date" id="date" name="date" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-primary-red focus:border-primary-red">
-                </div>
-                <div class="w-1/2">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Day</label>
-                    <select id="day" name="day" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-primary-red focus:border-primary-red bg-white">
-                        <option value="" disabled selected>-- Select --</option>
-                        <option value="Monday">Monday</option>
-                        <option value="Tuesday">Tuesday</option>
-                        <option value="Wednesday">Wednesday</option>
-                        <option value="Thursday">Thursday</option>
-                        <option value="Friday">Friday</option>
-                        <option value="Saturday">Saturday</option>
-                    </select>
-                </div>
-            </div>
+  <form id="leaveForm" class="space-y-4">
 
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Reason</label>
-                <textarea id="reason" name="reason" rows="3" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-primary-red focus:border-primary-red resize-none" placeholder="Reason for leave..."></textarea>
-            </div>
+    <select name="name" required class="w-full p-3 border rounded">
+      <option value="" disabled selected>-- Select Name --</option>
+      <option>Aakash</option>
+      <option>Rajmati</option>
+      <option>Deepak</option>
+      <option>Rakesh</option>
+      <option>Vedraaj</option>
+    </select>
 
-            <button id="submitBtn" type="submit" class="w-full relative flex items-center justify-center py-3 px-4 border border-transparent rounded-lg shadow-md text-base font-bold text-white bg-primary-red hover:bg-primary-dark-red transition duration-300">
-                <span id="btn-text">Submit & Open WhatsApp</span>
-                <svg id="loading-spinner" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-            </button>
-        </form>
-    </div>
+    <input type="date" name="date" id="date" required class="w-full p-3 border rounded">
 
-    <div id="success-message" class="success-message fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm z-50 flex items-center justify-center p-4 transition-opacity duration-300 ease-in-out opacity-0 pointer-events-none">
-        <div class="bg-white p-8 rounded-xl shadow-2xl text-center max-w-sm w-full">
-            <div class="flex justify-center mb-4">
-                <div class="h-16 w-16 bg-success-green rounded-full flex items-center justify-center text-white text-3xl font-bold animate-tick">✔</div>
-            </div>
-            <h3 class="text-xl font-bold text-gray-800 mb-2">Saved!</h3>
-            <p class="text-gray-600 mb-4">Data Sheet mein save ho gaya hai. Agar WhatsApp nahi khula, to niche click karein.</p>
-            
-            <a id="whatsapp-link-btn" href="#" target="_blank" class="block w-full py-3 px-4 rounded-lg text-white font-bold bg-[#25D366] hover:bg-[#128C7E] transition duration-150 mb-3 shadow-lg flex items-center justify-center gap-2">
-                 <span>Open WhatsApp Now</span>
-            </a>
+    <select name="day" id="day" required class="w-full p-3 border rounded">
+      <option disabled selected>-- Day --</option>
+      <option>Monday</option>
+      <option>Tuesday</option>
+      <option>Wednesday</option>
+      <option>Thursday</option>
+      <option>Friday</option>
+      <option>Saturday</option>
+    </select>
 
-            <button id="closeSuccessBtn" class="w-full py-2 px-4 rounded-lg text-gray-600 font-semibold bg-gray-200 hover:bg-gray-300 transition duration-150">
-                Close
-            </button>
-        </div>
-    </div>
+    <textarea name="reason" required placeholder="Reason" class="w-full p-3 border rounded"></textarea>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const form = document.getElementById("myForm");
-            const submitBtn = document.getElementById("submitBtn");
-            const btnText = document.getElementById("btn-text");
-            const loadingSpinner = document.getElementById("loading-spinner");
-            const successMessage = document.getElementById("success-message");
-            const closeSuccessBtn = document.getElementById("closeSuccessBtn");
-            const whatsappBtn = document.getElementById("whatsapp-link-btn");
-            const dateInput = document.getElementById('date');
-            const daySelect = document.getElementById('day');
-            
-            const WA_PHONE = "919711220917"; 
-            const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    <button id="submitBtn" class="w-full bg-primary-red text-white py-3 rounded font-bold">
+      Submit & Open WhatsApp
+    </button>
+  </form>
+</div>
 
-            function setLoading(isLoading) {
-                submitBtn.disabled = isLoading;
-                btnText.textContent = isLoading ? "Processing..." : "Submit & Open WhatsApp";
-                loadingSpinner.classList.toggle("hidden", !isLoading);
-            }
+<!-- SUCCESS POPUP -->
+<div id="success" class="fixed inset-0 bg-black/40 hidden items-center justify-center">
+  <div class="bg-white p-6 rounded-xl text-center">
+    <div class="text-green-600 text-4xl mb-2">✔</div>
+    <p class="font-bold mb-3">Data Google Sheet me save ho gaya</p>
+    <a id="waBtn" target="_blank" class="block bg-green-500 text-white px-4 py-2 rounded mb-2">
+      Open WhatsApp
+    </a>
+    <button onclick="closePopup()" class="text-gray-600">Close</button>
+  </div>
+</div>
 
-            function generateWhatsAppLink(data) {
-                const text = `*Leave Request*%0A*Name:* ${data.name}%0A*Date:* ${data.date}%0A*Day:* ${data.day}%0A*Reason:* ${data.reason}`;
-                return `https://wa.me/${WA_PHONE}?text=${text}`;
-            }
+<script>
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw2ZXcLdc5oYuSXkqtuTeW-KF8oaWJD9uiJgiSXxWyB3MVI-5EndEuVUF7oXwtn9W-F7g/exec";
+const WA_NUMBER = "919711220917";
 
-            function showSuccess(waLink) {
-                window.open(waLink, '_blank');
-                whatsappBtn.href = waLink;
-                successMessage.classList.remove("success-message","opacity-0","pointer-events-none");
-                successMessage.classList.add("opacity-100");
-                document.getElementById("form-container").classList.add("opacity-20","blur-sm");
-                form.reset();
-                setLoading(false);
-            }
+const form = document.getElementById("leaveForm");
+const success = document.getElementById("success");
+const waBtn = document.getElementById("waBtn");
+const dayField = document.getElementById("day");
+const dateField = document.getElementById("date");
 
-            function hideSuccess() {
-                successMessage.classList.remove("opacity-100");
-                successMessage.classList.add("opacity-0","pointer-events-none");
-                document.getElementById("form-container").classList.remove("opacity-20","blur-sm");
-            }
+const days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 
-            function updateDayFromDate() {
-                if (dateInput.value) {
-                    const dayName = daysOfWeek[new Date(dateInput.value).getDay()];
-                    daySelect.value = dayName !== 'Sunday' ? dayName : '';
-                }
-            }
+dateField.value = new Date().toISOString().split("T")[0];
+updateDay();
 
-            dateInput.addEventListener('input', updateDayFromDate);
-            closeSuccessBtn.addEventListener("click", hideSuccess);
+dateField.addEventListener("change", updateDay);
 
-            dateInput.value = new Date().toISOString().split('T')[0];
-            updateDayFromDate();
+function updateDay(){
+  const d = new Date(dateField.value).getDay();
+  if(days[d] !== "Sunday") dayField.value = days[d];
+}
 
-            form.addEventListener("submit", e => {
-                e.preventDefault();
-                setLoading(true);
-                const data = Object.fromEntries(new FormData(form).entries());
-                const waLink = generateWhatsAppLink(data);
-                setTimeout(() => showSuccess(waLink), 800);
-            });
-        });
-    </script>
+form.addEventListener("submit", e => {
+  e.preventDefault();
+
+  const data = Object.fromEntries(new FormData(form).entries());
+
+  const text =
+`*Leave Request*
+Name: ${data.name}
+Date: ${data.date}
+Day: ${data.day}
+Reason: ${data.reason}`;
+
+  const waLink = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(text)}`;
+
+  fetch(SCRIPT_URL, {
+    method: "POST",
+    body: JSON.stringify(data),
+    headers: { "Content-Type": "application/json" }
+  })
+  .then(() => {
+    waBtn.href = waLink;
+    window.open(waLink, "_blank");
+    success.classList.remove("hidden");
+    success.classList.add("flex");
+    form.reset();
+  })
+  .catch(() => {
+    alert("Sheet error, WhatsApp open ho raha hai");
+    window.open(waLink, "_blank");
+  });
+});
+
+function closePopup(){
+  success.classList.add("hidden");
+}
+</script>
+
 </body>
 </html>
