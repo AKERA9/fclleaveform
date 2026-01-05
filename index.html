@@ -43,6 +43,8 @@
                     <option value="Aakash">Aakash</option>
                     <option value="Rajmati">Rajmati</option>
                     <option value="Deepak">Deepak</option>
+                    <option value="Rakesh">Rakesh</option>
+                    <option value="Vedraaj">Vedraaj</option>
                 </select>
             </div>
 
@@ -110,108 +112,57 @@
             const dateInput = document.getElementById('date');
             const daySelect = document.getElementById('day');
             
-            // --- WhatsApp Number Configuration ---
             const WA_PHONE = "919711220917"; 
-
             const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
             function setLoading(isLoading) {
                 submitBtn.disabled = isLoading;
-                if (isLoading) {
-                    btnText.textContent = "Processing...";
-                    loadingSpinner.classList.remove("hidden");
-                } else {
-                    btnText.textContent = "Submit & Open WhatsApp";
-                    loadingSpinner.classList.add("hidden");
-                }
+                btnText.textContent = isLoading ? "Processing..." : "Submit & Open WhatsApp";
+                loadingSpinner.classList.toggle("hidden", !isLoading);
             }
 
             function generateWhatsAppLink(data) {
-                // Formatting the message
-                const text = `*Leave Request*%0A` +
-                             `*Name:* ${data.name}%0A` +
-                             `*Date:* ${data.date}%0A` +
-                             `*Day:* ${data.day}%0A` +
-                             `*Reason:* ${data.reason}`;
-                
+                const text = `*Leave Request*%0A*Name:* ${data.name}%0A*Date:* ${data.date}%0A*Day:* ${data.day}%0A*Reason:* ${data.reason}`;
                 return `https://wa.me/${WA_PHONE}?text=${text}`;
             }
 
             function showSuccess(waLink) {
-                // 1. Try to open WhatsApp automatically
                 window.open(waLink, '_blank');
-
-                // 2. Setup the manual button just in case popup blocked
                 whatsappBtn.href = waLink;
-
-                // 3. Show UI Modal
-                successMessage.classList.remove("success-message", "opacity-0", "pointer-events-none");
+                successMessage.classList.remove("success-message","opacity-0","pointer-events-none");
                 successMessage.classList.add("opacity-100");
-                document.getElementById("form-container").classList.add("opacity-20", "blur-sm");
-                
+                document.getElementById("form-container").classList.add("opacity-20","blur-sm");
                 form.reset();
                 setLoading(false);
-                updateDayFromDate(); // Reset date logic
             }
 
             function hideSuccess() {
                 successMessage.classList.remove("opacity-100");
-                successMessage.classList.add("opacity-0", "pointer-events-none");
-                document.getElementById("form-container").classList.remove("opacity-20", "blur-sm");
+                successMessage.classList.add("opacity-0","pointer-events-none");
+                document.getElementById("form-container").classList.remove("opacity-20","blur-sm");
             }
 
             function updateDayFromDate() {
-                const selectedDate = dateInput.value;
-                if (selectedDate) {
-                    const dateObj = new Date(selectedDate);
-                    const dayIndex = dateObj.getDay(); 
-                    const dayName = daysOfWeek[dayIndex];
-                    if (dayName !== 'Sunday') {
-                        daySelect.value = dayName;
-                    } else {
-                        daySelect.value = ''; 
-                    }
-                } else {
-                    daySelect.value = '';
+                if (dateInput.value) {
+                    const dayName = daysOfWeek[new Date(dateInput.value).getDay()];
+                    daySelect.value = dayName !== 'Sunday' ? dayName : '';
                 }
             }
 
             dateInput.addEventListener('input', updateDayFromDate);
             closeSuccessBtn.addEventListener("click", hideSuccess);
 
-            // Set today's date
-            const today = new Date();
-            dateInput.value = today.toISOString().split('T')[0];
+            dateInput.value = new Date().toISOString().split('T')[0];
             updateDayFromDate();
 
-            form.addEventListener("submit", function(e) {
+            form.addEventListener("submit", e => {
                 e.preventDefault();
                 setLoading(true);
-
-                const formData = Object.fromEntries(new FormData(this).entries());
-                
-                // Generate link immediately
-                const waLink = generateWhatsAppLink(formData);
-
-                if (typeof google !== 'undefined' && typeof google.script !== 'undefined') {
-                    google.script.run
-                        .withSuccessHandler(() => showSuccess(waLink))
-                        .withFailureHandler(error => {
-                            alert("Error saving to sheet, but opening WhatsApp...");
-                            setLoading(false);
-                            window.open(waLink, '_blank'); // Still open WA if sheet fails
-                        })
-                        .submitData(formData);
-                } else {
-                    // Testing mode (without Google Sheets)
-                    setTimeout(() => {
-                        console.log("Simulating submission...");
-                        showSuccess(waLink);
-                    }, 1000);
-                }
+                const data = Object.fromEntries(new FormData(form).entries());
+                const waLink = generateWhatsAppLink(data);
+                setTimeout(() => showSuccess(waLink), 800);
             });
         });
     </script>
 </body>
-
 </html>
